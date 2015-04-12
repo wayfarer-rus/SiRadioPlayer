@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SI-Radio Player</string>
+    <string name="title">Split Infinity Radio</string>
+    <string name="action_settings">Settings</string>
+    <string name="buttonStop">Stop</string>
+    <string name="buttonPlay">Play</string>
+    <string name="greeting">All day long, 7 days a geek</string>
+    <string name="nowPlaying">Now playing:</string>
+    <string name="by">by</string>
+</resources>
