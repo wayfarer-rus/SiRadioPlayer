@@ -1,6 +1,8 @@
 # SiRadioPlayer
+```
 Android app that is a streaming radio player, that plays [Split Infinity Radio](http://siradio.fm) only.
-
+Created with android-studio.
+```
 AAC stream decoding uses solution from [aacdecoder-android](http://code.google.com/p/aacdecoder-android) project.
 Therefore following copyrights should be mentioned.
 
