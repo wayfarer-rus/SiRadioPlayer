@@ -1,9 +1,12 @@
 .gradle
+/gradle.properties
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
+/.idea/gradle.xml
 .DS_Store
 /build
+/app/app.iml
 /app/src/main/obj/local
 /app/src/main/libs/*
 .svn/
