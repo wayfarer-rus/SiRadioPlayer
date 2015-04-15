@@ -1,15 +1,11 @@
 package org.siradio.wayfarer.siradioplayer;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -33,8 +29,6 @@ public class SiRadioPlayer extends ActionBarActivity {
     private static final String PLAYBACK_STATE = "playingState";
 
     private boolean mIsPlaying = false;
-    private NotificationManager mNotifyManager;
-    private NotificationCompat.Builder mBuilder;
     private String mDjName;
     private String mTitle;
     private String mSong;
@@ -57,6 +51,10 @@ public class SiRadioPlayer extends ActionBarActivity {
         // send message
         mRadioServiceConnection.sendMessageToService(MasterRadioControllerService.STOP);
         mIsPlaying = false;
+    }
+
+    public void updateMediaInfo(View view) {
+        mMediaInfoConnection.sendMessageToService(MediaInfoService.RESEND_INFO);
     }
 
     private void hideInfo() {
@@ -124,25 +122,22 @@ public class SiRadioPlayer extends ActionBarActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(playerStatusReceiver, new IntentFilter(MasterRadioControllerService.PLAYER_STATUS));
         // Bind Playback services
         doBindService();
-
-        // fire notification info
-        mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        Intent intent = new Intent(this, SiRadioPlayer.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        // Adds the back stack
-        stackBuilder.addParentStack(SiRadioPlayer.class);
-        // Adds the Intent to the top of the stack
-        stackBuilder.addNextIntent(intent);
-        // Gets a PendingIntent containing the entire back stack
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentTitle(getString(R.string.title))
-                .setContentText(getString(R.string.greeting))
-                .setSmallIcon(R.drawable.siradio_favicon_small)
-                .setContentIntent(pendingIntent);
         Log.d(LOG_TAG, "RadioPlayerApp created");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mIsPlaying = savedInstanceState.getBoolean(PLAYBACK_STATE);
+
+            if (mIsPlaying) {
+                mDjName = String.valueOf(savedInstanceState.getCharSequence(INFO_DJ));
+                mTitle = String.valueOf(savedInstanceState.getCharSequence(INFO_TITLE));
+                mSong = String.valueOf(savedInstanceState.getCharSequence(INFO_SONG));
+            }
+        }
     }
 
     @Override
@@ -171,28 +166,17 @@ public class SiRadioPlayer extends ActionBarActivity {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putCharSequence(INFO_DJ, getTextFromView(R.id.onAir));
-        savedInstanceState.putCharSequence(INFO_SONG, getTextFromView(R.id.song));
-        savedInstanceState.putCharSequence(INFO_TITLE, getTextFromView(R.id.track));
+        savedInstanceState.putCharSequence(INFO_DJ, mDjName);
+        savedInstanceState.putCharSequence(INFO_SONG, mSong);
+        savedInstanceState.putCharSequence(INFO_TITLE, mTitle);
         savedInstanceState.putBoolean(PLAYBACK_STATE, mIsPlaying);
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    private CharSequence getTextFromView(int viewId) {
-        TextView view = (TextView)findViewById(viewId);
-
-        if (view != null) {
-            return view.getText();
-        }
-
-        return null;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ImageLoader.getInstance().destroy();
-        mNotifyManager.cancelAll();
         doUnbindService();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mediaInfoReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(playerStatusReceiver);
@@ -239,10 +223,12 @@ public class SiRadioPlayer extends ActionBarActivity {
                 djImage.refreshDrawableState();
             }
 
-            mBuilder.setContentText(intent.getStringExtra(MediaInfoService.SONG_NAME) + " - " + intent.getStringExtra(MediaInfoService.TITLE_NAME));
-            mNotifyManager.notify(0, mBuilder.build());
+            // Remember MediaInfo
+            mDjName = intent.getStringExtra(MediaInfoService.ON_AIR);
+            mTitle = intent.getStringExtra(MediaInfoService.TITLE_NAME);
+            mSong = intent.getStringExtra(MediaInfoService.SONG_NAME);
             // Update screen
-            updateScreen(intent.getStringExtra(MediaInfoService.ON_AIR), intent.getStringExtra(MediaInfoService.TITLE_NAME), intent.getStringExtra(MediaInfoService.SONG_NAME));
+            updateScreen(mDjName, mTitle, mSong);
         }
     };
 

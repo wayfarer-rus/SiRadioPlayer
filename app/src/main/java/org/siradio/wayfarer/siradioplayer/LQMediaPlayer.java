@@ -26,7 +26,7 @@ public class LQMediaPlayer implements SiMediaPlayer {
 
     public void init(SiRadioPlayerService radioPlayerService) {
         if (lqMediaPlayer == null) {
-            lqMediaPlayer = new ArrayAACPlayer(ArrayDecoder.create(Decoder.DECODER_OPENCORE));
+            lqMediaPlayer = new ArrayAACPlayer(ArrayDecoder.create(Decoder.DECODER_FAAD2));
         }
 
         lqMediaPlayer.setPlayerCallback((LQRadioPlayerService)radioPlayerService);

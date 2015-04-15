@@ -29,7 +29,9 @@
                 android:id="@+id/djImage"
                 android:layout_gravity="center_horizontal"
                 android:scaleType="fitXY"
-                android:src="@drawable/siradio_favicon_large" />
+                android:src="@drawable/siradio_favicon_large"
+                android:clickable="true"
+                android:onClick="updateMediaInfo" />
 
             <LinearLayout
                 android:orientation="vertical"

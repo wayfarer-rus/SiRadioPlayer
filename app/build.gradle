@@ -78,7 +78,7 @@ android {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             commandLine 'ndk-build.cmd', '-C', file('src/main/jni').absolutePath
         } else {
-            commandLine '/opt/android-ndk/ndk-build', '-C', file('src/main/jni').absolutePath
+            commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath
         }
     }
 
