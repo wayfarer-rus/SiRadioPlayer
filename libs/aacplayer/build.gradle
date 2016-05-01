@@ -66,9 +66,9 @@ android {
     // call regular ndk-build(.cmd) script from app directory
     task ndkBuild(type: Exec) {
         if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-            commandLine 'ndk-build.cmd', '-C', file('jni').absolutePath
+            commandLine 'ndk-build.cmd', '-C', file('src/main/jni').absolutePath
         } else {
-            commandLine 'ndk-build', '-C', file('jni').absolutePath
+            commandLine 'ndk-build', '-C', file('src/main/jni').absolutePath
         }
     }
     tasks.withType(JavaCompile) {
