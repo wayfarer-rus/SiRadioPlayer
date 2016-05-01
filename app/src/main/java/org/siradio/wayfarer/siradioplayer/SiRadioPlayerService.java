@@ -84,7 +84,7 @@ public class SiRadioPlayerService extends Service {
         bindService(new Intent(this, MediaInfoService.class), mMediaInfoConnection, Context.BIND_AUTO_CREATE);
     }
 
-    protected void sendMessageToRadioService(int msgId) {
+    protected void sendMessageToOtherRadioService(int msgId) {
         mOtherPlayerConnection.sendMessageToService(msgId);
     }
 

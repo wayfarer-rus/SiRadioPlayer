@@ -1,32 +1,24 @@
 package org.siradio.wayfarer.siradioplayer;
 
-import android.app.Service;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
-
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Attributes;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
+import android.*;
+import android.app.*;
+import android.content.*;
+import android.content.pm.*;
+import android.os.*;
+import android.support.v4.content.*;
+import android.util.*;
+import java.io.*;
+import java.util.*;
+import org.jsoup.*;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
 
 /**
  * Project SiRadioPlayer
  * Created by wayfarer on 4/9/15.
  */
-public class MediaInfoService extends Service {
+public class MediaInfoService extends Service
+{
     private static final String LOG_TAG = "MediaInfoService";
     private static final String SI_RADIO_URL = "http://siradio.fm/";
     private static final long ONE_MINUTE = 60 * 1000;
@@ -46,48 +38,65 @@ public class MediaInfoService extends Service {
     private TimerTask timerTask;
 
     @Override
-    public void onCreate() {
+    public void onCreate()
+    {
         Log.d(LOG_TAG, "service created");
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
+    public IBinder onBind(Intent intent)
+    {
         Log.d(LOG_TAG, "service binded");
         return mServiceHandler.getBinder();
     }
 
     @Override
-    public boolean onUnbind(Intent intent) {
+    public boolean onUnbind(Intent intent)
+    {
         Log.d(LOG_TAG, "service unbinded");
         return true;
     }
 
     @Override
-    public void onRebind (Intent intent) {
+    public void onRebind(Intent intent)
+    {
         new HandleMediaInfoAsync().execute();
         Log.d(LOG_TAG, "service REbinded");
     }
 
     @Override
-    public void onDestroy() {
+    public void onDestroy()
+    {
         freeTimer();
         Log.d(LOG_TAG, "service destroyed");
     }
 
-    private void freeTimer() {
-        if (timer != null) {
+    private void freeTimer()
+    {
+        if (timer != null)
+        {
             timer.cancel();
             timer.purge();
             timer = null;
         }
 
-        if (timerTask != null) {
+        if (timerTask != null)
+        {
             timerTask.cancel();
             timerTask = null;
         }
     }
 
-    private void handleMediaInfo(Connection connection) throws IOException {
+    private void handleMediaInfo(Connection connection) throws IOException
+    {
+        Log.d(LOG_TAG, "+ enter handleMediaInfo");
+        
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
+        {
+            Log.d(LOG_TAG, "- leave handleMediaInfo: no internet permissions");
+            return;
+        }
+        
         Document doc = connection.get();
         Log.d(LOG_TAG, "broadcasting message");
         Intent mediaInfoIntent = new Intent(SiRadioPlayerService.MEDIA_INFO_ACTION);
@@ -97,36 +106,45 @@ public class MediaInfoService extends Service {
         mediaInfoIntent.putExtra(FACT_TEXT, getProperty(doc, "npfact"));
         String imageUrl = getDjPicture(doc, "npdjimg");
 
-        if (imageUrl != null) {
+        if (imageUrl != null)
+        {
             mediaInfoIntent.putExtra(IMAGE_URL, imageUrl);
         }
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(mediaInfoIntent);
+        Log.d(LOG_TAG, "- leave handleMediaInfo: success");
     }
 
-    private String getProperty(Document doc, String propName) {
+    private String getProperty(Document doc, String propName)
+    {
         Elements elements = doc.getElementsByAttributeValue("id", propName);
 
-        if (elements.size() > 0) {
+        if (elements.size() > 0)
+        {
             return elements.get(0).text();
         }
 
         return "";
     }
 
-    private String getDjPicture(Document doc, String propName) {
+    private String getDjPicture(Document doc, String propName)
+    {
         Elements elements = doc.getElementsByAttributeValue("id", propName);
 
-        if (elements.size() > 0) {
+        if (elements.size() > 0)
+        {
             Element e = elements.get(0); // div
             elements = e.getElementsByAttribute("src");
 
-            if (elements.size() > 0) {
+            if (elements.size() > 0)
+            {
                 e = elements.get(0); // img
                 Attributes attr = e.attributes();
 
-                for (Attribute a: attr) {
-                    if ("src".equals(a.getKey())) {
+                for (Attribute a: attr)
+                {
+                    if ("src".equals(a.getKey()))
+                    {
                         String url = e.baseUri() + a.getValue();
                         Log.d(LOG_TAG, url);
                         return url;
@@ -139,10 +157,13 @@ public class MediaInfoService extends Service {
     }
 
     // Handler that receives messages from the thread
-    private final class MediaInfoServiceHandler extends Handler {
+    private final class MediaInfoServiceHandler extends Handler
+    {
         @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
                 case START_COLLECTING_INFO:
                     timer = new Timer();
                     timerTask = createNewTimerTask();
@@ -160,26 +181,36 @@ public class MediaInfoService extends Service {
         }
     }
 
-    private TimerTask createNewTimerTask() {
+    private TimerTask createNewTimerTask()
+    {
         return new TimerTask() {
             Connection connection = Jsoup.connect(SI_RADIO_URL);
 
-            public void run() {
-                try {
+            public void run()
+            {
+                try
+                {
                     handleMediaInfo(connection);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     Log.e(LOG_TAG, e.getMessage(), e);
                 }
             }
         };
     }
 
-    private class HandleMediaInfoAsync extends AsyncTask<Void, Void, Void> {
+    private class HandleMediaInfoAsync extends AsyncTask<Void, Void, Void>
+    {
         @Override
-        protected Void doInBackground(Void... params) {
-            try {
+        protected Void doInBackground(Void... params)
+        {
+            try
+            {
                 handleMediaInfo(Jsoup.connect(SI_RADIO_URL));
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 Log.e(LOG_TAG, e.getMessage(), e);
             }
 

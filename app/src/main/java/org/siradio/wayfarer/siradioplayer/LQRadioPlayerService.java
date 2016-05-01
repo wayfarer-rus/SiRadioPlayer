@@ -27,7 +27,7 @@ public class LQRadioPlayerService extends SiRadioPlayerService implements Player
     public void playerPCMFeedBuffer(boolean isPlaying, int audioBufferSizeMs, int audioBufferCapacityMs) {
         if (isPlaying && !started) {
             started = true;
-            sendMessageToRadioService(SiRadioPlayerService.DESTROY);
+            sendMessageToOtherRadioService(SiRadioPlayerService.DESTROY);
         }
 
         StringBuffer info = new StringBuffer();

@@ -7,4 +7,8 @@
     <string name="greeting">All day long, 7 days a geek</string>
     <string name="nowPlaying">Now playing:</string>
     <string name="by">by</string>
+    <string name="permision_available">Permission granted!</string>
+    <string name="permissions_not_granted">Permission not granted.</string>
+    <string name="permission_network_state_rationale">Network permissions is required!</string>
+    <string name="ok">OK</string>
 </resources>

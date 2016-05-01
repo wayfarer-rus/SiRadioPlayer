@@ -19,7 +19,7 @@ public class HQRadioPlayerService extends SiRadioPlayerService implements MediaP
     @Override
     public void onPrepared(MediaPlayer player) {
         Log.d(LOG_TAG, "HQMediaPlayer prepared. Other player will be destroyed.");
-        sendMessageToRadioService(SiRadioPlayerService.DESTROY);
+        sendMessageToOtherRadioService(SiRadioPlayerService.DESTROY);
         player.start();
     }
 
