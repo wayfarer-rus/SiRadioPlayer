@@ -143,6 +143,14 @@ public class MasterRadioControllerService extends Service implements AudioManage
         Log.d(LOG_TAG, "Service destroyed");
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.d(LOG_TAG, "+ enter onTaskRemoved");
+        super.onTaskRemoved(rootIntent);
+        //stopSelf();
+        Log.d(LOG_TAG, "- leave onTaskRemoved");
+    }
+
     private void handleIntent(Intent intent)
     {
         if (intent == null || intent.getAction() == null)

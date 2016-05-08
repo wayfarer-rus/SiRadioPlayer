@@ -130,18 +130,21 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        Log.d(LOG_TAG, "+ enter onCreate()");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_si_radio_player);
         mLayout = findViewById(R.id.container);
 
         if (savedInstanceState == null)
         {
+            Log.d(LOG_TAG, "create UI");
             getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, new PlaceholderFragment())
                 .commit();
         }
         else
         {
+            Log.d(LOG_TAG, "load instance state");
             mIsPlaying = savedInstanceState.getBoolean(PLAYBACK_STATE);
 
             if (mIsPlaying)
@@ -152,7 +155,9 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
             }
         }
 
+        Log.d(LOG_TAG, "init ImageLoader");
         ImageLoader.getInstance().init(ImageLoaderConfiguration.createDefault(this));
+        Log.d(LOG_TAG, "register Receivers");
         // MediaInfo listener
         LocalBroadcastManager.getInstance(this).registerReceiver(mediaInfoReceiver, new IntentFilter(SiRadioPlayerService.MEDIA_INFO_ACTION));
         // PlayerStatus listener
@@ -160,8 +165,10 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
         // Audio noisy listener
         LocalBroadcastManager.getInstance(this).registerReceiver(audioBecomingNoisyReceiver, new IntentFilter(MusicIntentReceiver.AUDIO_BECOMES_NOISY));
         // Bind Playback services
+        Log.d(LOG_TAG, "bind services");
         doBindService();
         Log.d(LOG_TAG, "RadioPlayerApp created");
+        Log.d(LOG_TAG, "- leave onCereate");
     }
 
     private void checkMyPermissions(String permission, int permissionRequestTag)
@@ -307,9 +314,9 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
 
     private Notification.Action generateAction(int iconId, String title, String intentAction)
     {
-        Intent intent = new Intent(getApplicationContext(), MasterRadioControllerService.class);
+        Intent intent = new Intent(this, MasterRadioControllerService.class);
         intent.setAction(intentAction);
-        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, 0);
 
         // TODO: change it with next update
         return new Notification.Action.Builder(iconId, title, pendingIntent).build();
@@ -318,9 +325,8 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
     private void buildNotification(Notification.Action action)
     {
         Notification.MediaStyle style = new Notification.MediaStyle();
-        Intent intent = new Intent(getApplicationContext(), MasterRadioControllerService.class);
-        intent.setAction(MasterRadioControllerService.ACTION_STOP);
-        PendingIntent pendingIntent = PendingIntent.getService(getApplicationContext(), 1, intent, 0);
+        Intent resultIntent = new Intent(this, SiRadioPlayer.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         // get image bitmap from image view (it always contain actual picture) for notification dialog
         ImageView image = (ImageView)findViewById(R.id.djImage);
         Bitmap bitmap = ((BitmapDrawable)image.getDrawable()).getBitmap();
@@ -330,8 +336,9 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
             .setLargeIcon(bitmap)
             .setContentTitle(mTitle)
             .setContentText(mSong)
-            .setDeleteIntent(pendingIntent)
+            .setContentIntent(pendingIntent)
             .setStyle(style)
+            .setOngoing(true)
             .setVisibility(Notification.VISIBILITY_PUBLIC);
 
         builder.addAction(action);
@@ -364,6 +371,11 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
     {
         super.onResume();
         updateButtonState();
+
+        if (mIsPlaying) {
+            updateNotification();
+        }
+
         Log.d(LOG_TAG, "Resumed");
     }
 
@@ -402,15 +414,22 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
     @Override
     protected void onDestroy()
     {
-        super.onDestroy();
-        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(1);
+        Log.d(LOG_TAG, "+ enter onDestroy()");
+        Log.d(LOG_TAG, "get NotificationManager");
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Log.d(LOG_TAG, "close Notification");
+        notificationManager.cancelAll();
+        Log.d(LOG_TAG, "destroy ImageLoader");
         ImageLoader.getInstance().destroy();
+        Log.d(LOG_TAG, "unbind services");
         doUnbindService();
+        Log.d(LOG_TAG, "unregister Receivers");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mediaInfoReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(playerStatusReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(audioBecomingNoisyReceiver);
         Log.d(LOG_TAG, "RadioPlayerApp destroyed");
+        super.onDestroy();
+        Log.d(LOG_TAG, "- leave onDestroy()");
     }
 
     @Override
