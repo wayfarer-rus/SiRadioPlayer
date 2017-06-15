@@ -1,2 +1,1 @@
-include ':libs:aacplayer', ':app'
-//project(':libs:aacplayer').projectDir = new File(settingsDir, 'libs/aacplayer')
+include ':app', ':aacplayer'

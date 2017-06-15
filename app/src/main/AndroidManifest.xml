@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.siradio.wayfarer.siradioplayer" >
+    package="wayfarer.siradioplayer" >
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -11,25 +11,16 @@
         android:allowBackup="true"
         android:icon="@mipmap/siradio_favicon_small"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/siradio_favicon_small"
+        android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity
-            android:name=".SiRadioPlayer"
-            android:label="@string/app_name"
-            android:launchMode="singleTop">
+        <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".MusicIntentReceiver">
-            <intent-filter>
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
-            </intent-filter>
-        </receiver>
-        <service android:name="org.siradio.wayfarer.siradioplayer.LQRadioPlayerService" />
-        <service android:name="org.siradio.wayfarer.siradioplayer.HQRadioPlayerService" />
-        <service android:name="org.siradio.wayfarer.siradioplayer.MasterRadioControllerService" />
-        <service android:name="org.siradio.wayfarer.siradioplayer.MediaInfoService" />
     </application>
 
 </manifest>
