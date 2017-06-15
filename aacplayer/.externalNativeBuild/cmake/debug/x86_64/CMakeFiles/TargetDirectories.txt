@@ -1,4 +1,0 @@
-/home/wayfarer/AndroidStudioProjects/SiRadioPlayer_Kotlin/aacplayer/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/edit_cache.dir
-/home/wayfarer/AndroidStudioProjects/SiRadioPlayer_Kotlin/aacplayer/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/rebuild_cache.dir
-/home/wayfarer/AndroidStudioProjects/SiRadioPlayer_Kotlin/aacplayer/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/aacarray.dir
-/home/wayfarer/AndroidStudioProjects/SiRadioPlayer_Kotlin/aacplayer/.externalNativeBuild/cmake/debug/x86_64/CMakeFiles/faad2.dir

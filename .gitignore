@@ -1,3 +1,4 @@
+/aacplayer/.externalNativeBuild/
 *.iml
 .gradle
 /local.properties

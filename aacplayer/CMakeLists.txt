@@ -65,7 +65,7 @@ target_link_libraries( # Specifies the target library.
                        ${log-lib} )
 
 # compile with FAAD2 decoder only!
-ADD_DEFINITIONS(-DAAC_ARRAY_FEATURE_FAAD2 -DAACD_LOGLEVEL_ERROR -DAAC_ARRAY_FEATURES=0x001)
+ADD_DEFINITIONS(-DAAC_ARRAY_FEATURE_FAAD2 -DAACD_LOGLEVEL_ERROR -DAAC_ARRAY_FEATURES=0x001 -DHAVE_MEMCPY)
 
 set_target_properties(faad2 PROPERTIES LINKER_LANGUAGE C)
 set_target_properties(aacarray PROPERTIES LINKER_LANGUAGE C)
