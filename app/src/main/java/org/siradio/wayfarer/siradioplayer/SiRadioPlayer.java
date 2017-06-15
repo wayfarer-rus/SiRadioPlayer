@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Icon;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -317,9 +318,11 @@ public class SiRadioPlayer extends AppCompatActivity implements ActivityCompat.O
         Intent intent = new Intent(this, MasterRadioControllerService.class);
         intent.setAction(intentAction);
         PendingIntent pendingIntent = PendingIntent.getService(this, 1, intent, 0);
+        Icon i = Icon.createWithResource(this, iconId);
 
         // TODO: change it with next update
-        return new Notification.Action.Builder(iconId, title, pendingIntent).build();
+//        return new Notification.Action.Builder(iconId, title, pendingIntent).build();
+        return new Notification.Action.Builder(i, title, pendingIntent).build();
     }
 
     private void buildNotification(Notification.Action action)
